@@ -1,0 +1,28 @@
+{
+  "name": "gatsby-plugin-slug-field",
+  "description": "Create slugs from node data using specific fields",
+  "version": "0.1.0",
+  "author": "stldo (https://github.com/stldo)",
+  "license": "MIT",
+  "repository": "https://github.com/stldo/gatsby-plugin-slug-field",
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin",
+    "slug",
+    "slugify",
+    "url",
+    "urlify",
+    "url-safe",
+    "seo"
+  ],
+  "dependencies": {
+    "is-plain-object": "^3.0.0",
+    "url-slug": "^2.1.1"
+  },
+  "peerDependencies": {
+    "gatsby": "2.x"
+  },
+  "scripts": {
+    "postversion": "git push && git push --tags"
+  }
+}
