@@ -35,12 +35,12 @@ $ npm install gatsby-plugin-slug-field
 module.exports = {
   plugins: [
     {
-      resolve: `gatsby-plugin-slug-field`,
+      resolve: 'gatsby-plugin-slug-field',
       options: {
-        filter: { internal: { type: 'PostsYaml' } }
-        source = ['author', 'title', 'id'],
-        fieldName = 'postSlug',
-        urlSlugOptions = {
+        filter: { internal: { type: 'PostsYaml' } },
+        source: ['author', 'title', 'id'],
+        fieldName: 'postSlug',
+        urlSlugOptions: {
           separator: '_'
         }
       },
