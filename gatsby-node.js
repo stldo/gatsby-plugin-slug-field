@@ -19,13 +19,15 @@ function validateFilter(node, filter) {
 
 exports.onCreateNode = function (
   { node, actions },
-  { filter, source, fieldName = 'slug', urlSlugOptions = {} }
+  { filter = true, source, fieldName = 'slug', urlSlugOptions = {} }
 ) {
   if (typeof filter === 'function') {
     if (!filter(node)) return
   } else if (isPlainObject(filter)) {
     if (!validateFilter(node, filter)) return
-  } else if (filter !== false) {
+  } else if (filter === false) {
+    return
+  } else if (filter !== true) {
     throw new Error(`Invalid 'filter' value: '${String(filter)}'`)
   }
 
