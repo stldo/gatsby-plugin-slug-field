@@ -48,11 +48,10 @@ exports.onCreateNode = function (
   }
 
   const { createNodeField } = actions
-  const { separator, transformer } = urlSlugOptions
 
   createNodeField({
     node,
     name: fieldName,
-    value: baseString.length ? urlSlug(baseString, separator, transformer) : '',
+    value: baseString.length ? urlSlug(baseString, urlSlugOptions) : '',
   })
 }
