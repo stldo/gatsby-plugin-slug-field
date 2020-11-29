@@ -18,8 +18,8 @@ function validateFilter(node, filter) {
 }
 
 exports.onCreateNode = function (
-  { node, actions },
-  { filter = true, source, fieldName = 'slug', urlSlugOptions = {} }
+  { node, actions, getNodes },
+  { filter = true, source, fieldName = 'slug', urlSlugOptions = {}, avoidCollision = false }
 ) {
   if (typeof filter === 'function') {
     if (!filter(node)) return
@@ -51,9 +51,28 @@ exports.onCreateNode = function (
 
   const { createNodeField } = actions
 
+
+  const slugs = avoidCollision
+    ? getNodes()
+      .filter(existingNode => validateFilter(existingNode, filter))
+      .map(existingNode => existingNode?.fields?.[fieldName])
+      .filter(Boolean)
+    : []
+
+  let increment = 0
+  let slug = ''
+
+  do {
+    slug = urlSlug(
+      `${baseString}${increment ? ` ${increment}` : ''}`,
+      urlSlugOptions
+    )
+    increment++
+  } while (slugs.includes(slug))
+
   createNodeField({
     node,
     name: fieldName,
-    value: baseString.length ? urlSlug(baseString, urlSlugOptions) : '',
+    value: baseString.length ? slug : '',
   })
 }
