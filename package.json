@@ -16,8 +16,7 @@
     "seo"
   ],
   "dependencies": {
-    "is-plain-object": "^3.0.0",
-    "url-slug": "^2.3.1"
+    "url-slug": "^3.0.1"
   },
   "peerDependencies": {
     "gatsby": "2.x"

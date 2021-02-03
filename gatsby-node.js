@@ -1,59 +1,91 @@
-const isPlainObject = require(`is-plain-object`)
-const urlSlug = require(`url-slug`)
+const { GraphQLString } = require('gatsby/graphql')
+const { convert } = require('url-slug')
 
-function validateFilter(node, filter) {
-  const entries = Object.entries(filter)
-
-  for (let [key, value] of entries) {
-    if (isPlainObject(value)) {
-      if (!isPlainObject(node[key]) || !validateFilter(node[key], value)) {
-        return false
-      }
-    } else if (node[key] !== value) {
-      return false
+function getBase (node, baseField, reporter) {
+  if (typeof baseField === 'string') {
+    return node[baseField] != null ? String(node[baseField]) : ''
+  } else if (typeof baseField === 'function') {
+    const base = baseField(node)
+    if (typeof base === 'string') {
+      return base
     }
-  }
-
-  return true
-}
-
-exports.onCreateNode = function (
-  { node, actions },
-  { filter = true, source, fieldName = 'slug', urlSlugOptions = {} }
-) {
-  if (typeof filter === 'function') {
-    if (!filter(node)) return
-  } else if (isPlainObject(filter)) {
-    if (!validateFilter(node, filter)) return
-  } else if (filter === false) {
-    return
-  } else if (filter !== true) {
-    throw new Error(`Invalid 'filter' value: '${String(filter)}'`)
-  }
-
-  const typeOfSource = typeof source
-  let baseString
-
-  if (typeOfSource === 'string') {
-    baseString = node[source] != null ? String(node[source]) : ''
-  } else if (typeOfSource === 'function') {
-    baseString = source(node)
-    if (typeof baseString !== 'string') {
-      throw new Error(`'source' function must return a string`)
-    }
-  } else if (Array.isArray(source)) {
-    baseString = source.reduce((result, key) => {
+    reporter.error(
+      '[gatsby-plugin-slug-field] "baseField" function must return a string.'
+    )
+  } else if (Array.isArray(baseField)) {
+    return baseField.reduce((result, key) => {
       return `${result} ${node[key] != null ? node[key] : ''}`
     }, '')
   } else {
-    throw new Error(`Invalid 'source' value: '${String(source)}'`)
+    reporter.error(
+      `[gatsby-plugin-slug-field] "baseField" value is invalid: ` +
+      `"${String(baseField)}".`
+    )
   }
 
-  const { createNodeField } = actions
+  return ''
+}
 
-  createNodeField({
-    node,
-    name: fieldName,
-    value: baseString.length ? urlSlug(baseString, urlSlugOptions) : '',
-  })
+function getSlug (node, baseField, urlSlugOptions, reporter) {
+  const base = node.slug != null
+    ? String(node.slug)
+    : getBase(node, baseField, reporter)
+  return base && convert(base, urlSlugOptions)
+}
+
+exports.setFieldsOnGraphQLNodeType = ({
+  reporter,
+  type
+}, {
+  baseField,
+  fieldName = 'slug',
+  nodeType = false,
+  uniqueSlugs = false,
+  urlSlug = {}
+}) => {
+  if (typeof nodeType === 'string') {
+    if (type.name !== nodeType) return
+  } else if (Array.isArray(nodeType)) {
+    if (!nodeType.includes(type.name)) return
+  } else {
+    if (nodeType !== false) {
+      reporter.error(
+        `[gatsby-plugin-slug-field] "nodeType" value is invalid: ` +
+        `"${String(nodeType)}".`
+      )
+    }
+    return
+  }
+
+  return {
+    [fieldName]: {
+      type: GraphQLString,
+      resolve: node => {
+        if (!uniqueSlugs) {
+          return getSlug(node, baseField, urlSlug, reporter)
+        }
+
+        const counter = {}
+
+        for (const sibling of type.nodes) {
+          const slug = getSlug(sibling, baseField, urlSlug, reporter)
+
+          if (sibling.id !== node.id) {
+            console.log(123, counter)
+            counter[slug] = (counter[slug] || 0) + 1
+            continue
+          }
+
+          console.log(456, counter)
+
+          return !counter[slug]
+            ? slug
+            : convert(`${slug} ${counter[slug]}`, urlSlug)
+        }
+
+        reporter.error('Unable to process slug.')
+        return ''
+      }
+    }
+  }
 }
