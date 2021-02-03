@@ -71,12 +71,9 @@ exports.setFieldsOnGraphQLNodeType = ({
           const slug = getSlug(sibling, baseField, urlSlug, reporter)
 
           if (sibling.id !== node.id) {
-            console.log(123, counter)
             counter[slug] = (counter[slug] || 0) + 1
             continue
           }
-
-          console.log(456, counter)
 
           return !counter[slug]
             ? slug
