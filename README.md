@@ -145,7 +145,7 @@ There are breaking changes in version 0.3.0 for users coming from 0.2.0.
 ### fieldName
 
 In version 0.2.0, the `fieldName` field was available in the `fields` section.
-Now, it'll be available right in the node, i.e.:
+Now, it'll be available directly in the node, i.e.:
 
 ```graphql
 # Version 0.2.0
