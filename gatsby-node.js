@@ -18,7 +18,7 @@ function getBase (node, baseField, reporter) {
     }, '')
   } else {
     reporter.error(
-      `[gatsby-plugin-slug-field] "baseField" value is invalid: ` +
+      '[gatsby-plugin-slug-field] "baseField" value is invalid: ' +
       `"${String(baseField)}".`
     )
   }
@@ -50,7 +50,7 @@ exports.setFieldsOnGraphQLNodeType = ({
   } else {
     if (nodeType !== false) {
       reporter.error(
-        `[gatsby-plugin-slug-field] "nodeType" value is invalid: ` +
+        '[gatsby-plugin-slug-field] "nodeType" value is invalid: ' +
         `"${String(nodeType)}".`
       )
     }
