@@ -1,59 +1,22 @@
 const { GraphQLString } = require('gatsby/graphql')
 const { convert } = require('url-slug')
 
-function getBase (node, baseField, reporter) {
-  if (typeof baseField === 'string') {
-    return node[baseField] != null ? String(node[baseField]) : ''
-  } else if (typeof baseField === 'function') {
-    const base = baseField(node)
-    if (typeof base === 'string') {
-      return base
-    }
-    reporter.error(
-      '[gatsby-plugin-slug-field] "baseField" function must return a string.'
-    )
-  } else if (Array.isArray(baseField)) {
-    return baseField.reduce((result, key) => {
-      return `${result} ${node[key] != null ? node[key] : ''}`
-    }, '')
-  } else {
-    reporter.error(
-      '[gatsby-plugin-slug-field] "baseField" value is invalid: ' +
-      `"${String(baseField)}".`
-    )
-  }
+const getSlug = require('./lib/get-slug')
 
-  return ''
-}
-
-function getSlug (node, baseField, urlSlugOptions, reporter) {
-  const base = node.slug != null
-    ? String(node.slug)
-    : getBase(node, baseField, reporter)
-  return base && convert(base, urlSlugOptions)
-}
-
-exports.setFieldsOnGraphQLNodeType = ({
-  reporter,
-  type
-}, {
+exports.setFieldsOnGraphQLNodeType = ({ type }, {
   baseField,
   fieldName = 'slug',
   nodeType = false,
   uniqueSlugs = false,
-  urlSlug = {}
+  urlSlug: urlSlugOptions = {}
 }) => {
   if (typeof nodeType === 'string') {
     if (type.name !== nodeType) return
   } else if (Array.isArray(nodeType)) {
     if (!nodeType.includes(type.name)) return
+  } else if (nodeType !== false) {
+    throw new Error(`"nodeType" value is invalid: "${nodeType}"`)
   } else {
-    if (nodeType !== false) {
-      reporter.error(
-        '[gatsby-plugin-slug-field] "nodeType" value is invalid: ' +
-        `"${String(nodeType)}".`
-      )
-    }
     return
   }
 
@@ -62,26 +25,25 @@ exports.setFieldsOnGraphQLNodeType = ({
       type: GraphQLString,
       resolve: node => {
         if (!uniqueSlugs) {
-          return getSlug(node, baseField, urlSlug, reporter)
+          return getSlug(node, baseField, urlSlugOptions)
         }
 
         const counter = {}
 
-        for (const sibling of type.nodes) {
-          const slug = getSlug(sibling, baseField, urlSlug, reporter)
+        for (const typeNode of type.nodes) {
+          const slug = getSlug(typeNode, baseField, urlSlugOptions)
 
-          if (sibling.id !== node.id) {
+          if (typeNode.id !== node.id) {
             counter[slug] = (counter[slug] || 0) + 1
             continue
           }
 
-          return !counter[slug]
-            ? slug
-            : convert(`${slug} ${counter[slug]}`, urlSlug)
+          return counter[slug]
+            ? convert(`${slug} ${counter[slug]}`, urlSlugOptions)
+            : slug
         }
 
-        reporter.error('Unable to process slug.')
-        return ''
+        throw new Error('Unable to process slug')
       }
     }
   }
