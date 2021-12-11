@@ -1,117 +1,49 @@
 # gatsby-plugin-slug-field
 
-> ⚠️ __Warning__: This plugin was completely rewritten in version 0.3.0. Check
-> the section "[Migrating from 0.2.0](#migrating-from-020)" for more
-> information about what was changed.
-
-Create slugs from node data, using specific fields to generate a source string.
-
-```graphql
-# Using default options, with source parameter set to 'title'
-
-query {
-  allPostsYaml {
-    edges {
-      node {
-        id # 1234
-        title # 'Blog Post Title'
-        content # ...
-        slug # blog-post-title
-      }
-    }
-  }
-}
-```
+Create a `slug` field in nodes using data from their other fields.
 
 ## Install
 
-```bash
+```sh
 $ npm install gatsby-plugin-slug-field
 ```
 
-## Configure
+Enable the plugin in `gatsby-config.js`:
 
-```javascript
-// gatsby-config.js
-
+```js
 module.exports = {
   plugins: [
     {
       resolve: 'gatsby-plugin-slug-field',
       options: {
         baseField: 'title',
-        fieldName: 'slug',
-        nodeType: 'PostsYaml',
-        urlSlug: {}
-      },
+        nodeType: 'PostsYaml'
+      }
     }
-  ],
+  ]
 }
 ```
 
-## Options
-
-### baseField
-
-Type: `string`, `Array` or `function`.
-
-Defines the fields used to generate the slug. If set to a `string` or `array`,
-the matching fields will be used to generate the slug — if a field is `null` or
-`undefined`, it will be included as an empty string. For complex cases, you can
-use a function with this option. It will receive the current node as parameter
-(e.g. `node => node.field + '-slug'`), and must return a `string` to be
-processed by [url-slug](https://github.com/stldo/url-slug).
-
-### fieldName
-
-Default: `'slug'`. Type: `string`.
-
-The field name to store the generated slug. If the source node has a field with
-the same name already, its value will be passed to
-[url-slug](https://github.com/stldo/url-slug) and the `baseField` option will be
-ignored for that node.
-
-### nodeType
-
-Default: `false`. Type: `string`, `Array` or `false`.
-
-Filter which nodes will be processed. It can be a single node type (e.g.
-`'PostsYaml'`), or an array of node types (e.g. `['AuthorsYaml', 'PostsYaml']`).
-Set it to `false` to disable the plugin.
-
-### uniqueSlugs
-
-Default: `false`. Type: `boolean`.
-
-If this option is set to true, a numerical suffix will be added to duplicated
-slugs.
-
-#### Caveats
-
-The order of the nodes is not fixed in Gatsby so, after editing a node in
-development environment, its suffixes can be changed.
-
-### urlSlug
-
-Default: `{}`. Type: `Object`.
-
-The options object to be passed to
-[url-slug](https://github.com/stldo/url-slug). More info about it can be found
-in the [url-slug documentation](https://github.com/stldo/url-slug#readme).
+> In the example above, a `slug` field using the `title` field content will be
+> added to all PostsYaml nodes.
 
 ## Usage
 
-```javascript
-// gatsby-config.js
+The `nodeType` option must be set to enable the plugin. A `slug` field will be
+added to node types matching this option, and the slug will be generated using
+the data from `baseField` option.
 
+— Using the following `gatsby-config.js`:
+
+```js
 module.exports = {
   plugins: [
     {
       resolve: 'gatsby-plugin-slug-field',
       options: {
-        nodeType: 'PostsYaml',
-        source: ['author', 'title', 'id'],
+        baseField: ['author', 'title', 'id'],
         fieldName: 'postSlug',
+        nodeType: 'PostsYaml',
         urlSlug: {
           separator: '_'
         }
@@ -121,64 +53,103 @@ module.exports = {
 }
 ```
 
-```graphql
-# The options set above will reflect in the following query
+— The query:
 
+```graphql
 query {
   allPostsYaml {
-    edges {
-      node {
-        id # 1234
-        title # 'Blog Post Title'
-        author # null
-        postSlug # blog_post_title_1234
+    nodes {
+      id
+      title
+      author
+      postSlug
+    }
+  }
+}
+```
+
+— Will return:
+
+```js
+{
+  data: {
+    allPostsYaml: {
+      nodes: {
+        id: 1234,
+        title: 'Blog Post Title',
+        author: undefined,
+        postSlug: 'blog_post_title_1234'
       }
     }
   }
 }
 ```
 
-## Migrating from 0.2.0
+## Configure
 
-There are breaking changes in version 0.3.0 for users coming from 0.2.0.
-
-### fieldName
-
-In version 0.2.0, the `fieldName` field was available in the `fields` section.
-Now, it'll be available directly in the node, i.e.:
-
-```graphql
-# Version 0.2.0
-query {
-  contentNode {
-    fields {
-      slug
+```js
+module.exports = {
+  plugins: [
+    {
+      resolve: 'gatsby-plugin-slug-field'
+      // options: {
+      //   baseField,
+      //   fieldName: 'slug',
+      //   nodeType: false,
+      //   urlSlug: {}
+      // }
     }
-  }
-}
-
-# Version 0.3.0
-query {
-  contentNode {
-    slug
-  }
+  ]
 }
 ```
 
-### `filter` options was deprecated
+### baseField
 
-Instead of using the `filter` option, use the new `nodeType` option. Starting in
-version 0.3.0, this plugin will only filter nodes by their type. Due to the
-GraphQL's nature, this will not affect most projects. If this change affects
-you, please open an issue, so we can find a workaround.
+Type: `string`, `Array` or `function`.
 
-### Renamed options
+Defines the fields used to generate the slug. If set to a `string` or an
+`Array`, the matching fields will be used to generate the slug — if a field is
+`null` or `undefined`, it will be included as an empty string. For more complex
+use cases, a function is also accepted. It will receive the current node as the
+only parameter (e.g. `node => node.field + '-slug'`) and must return a `string`
+— which will be used by [url-slug][1] to generate the slug.
 
-The following options were renamed:
+### fieldName
 
-- `source`: `baseField`;
-- `urlSlugOptions`: `urlSlug`.
+Type: `string`. Default: `'slug'`.
+
+The field name to store the generated slug. If the source node already has a
+field with the same name, its value will be passed to `url-slug`, and the
+`baseField` option will be ignored for that node.
+
+### nodeType
+
+Type: `string`, `Array` or `false`. Default: `false`.
+
+Filter which node types will be processed. It can be a single node type (e.g.
+`'PostsYaml'`), or an array of node types (e.g. `['AuthorsYaml', 'PostsYaml']`).
+Set it to `false` to disable the plugin.
+
+### uniqueSlugs
+
+Type: `boolean`. Default: `false`.
+
+If this option is set to true, a numerical suffix will be added to duplicated
+slugs.
+
+> __Caveat:__ the numerical suffix can change during development or between
+> production builds.
+
+### urlSlug
+
+Type: `Object`. Default: `{}`.
+
+`url-slug` options, more info can be found on its [documentation][2].
 
 ## License
 
-[The MIT License](./LICENSE)
+[The MIT License][license]
+
+[1]: https://github.com/stldo/url-slug
+[2]: https://github.com/stldo/url-slug#readme
+[license]: ./LICENSE
