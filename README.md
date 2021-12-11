@@ -144,7 +144,7 @@ slugs.
 
 Type: `Object`. Default: `{}`.
 
-`url-slug` options, more info can be found on its [documentation][2].
+`url-slug` options, more info can be found [here][2].
 
 ## License
 
