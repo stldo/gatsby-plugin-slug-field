@@ -1,4 +1,3 @@
-const { GraphQLString } = require('gatsby/graphql')
 const { convert } = require('url-slug')
 
 const getSlug = require('./lib/get-slug')
@@ -22,7 +21,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type }, {
 
   return {
     [fieldName]: {
-      type: GraphQLString,
+      type: 'String',
       resolve: node => {
         if (!uniqueSlugs) {
           return getSlug(node, baseField, urlSlugOptions)
