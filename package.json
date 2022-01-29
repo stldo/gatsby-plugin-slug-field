@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-slug-field",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Create a slug field in nodes using data from other fields",
   "repository": "https://github.com/stldo/gatsby-plugin-slug-field",
   "keywords": [
