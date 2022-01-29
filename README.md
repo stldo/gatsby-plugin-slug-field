@@ -1,14 +1,16 @@
-# gatsby-plugin-slug-field
+# gatsby-plugin-slug-field [![npm][1]][2]
 
 Create a `slug` field in nodes using data from their other fields.
 
-## Install
+## Installation
 
 ```sh
-$ npm install gatsby-plugin-slug-field
+npm install gatsby-plugin-slug-field
 ```
 
-Enable the plugin in `gatsby-config.js`:
+## Usage
+
+First, enable the plugin in `gatsby-config.js`:
 
 ```js
 module.exports = {
@@ -16,24 +18,20 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-slug-field',
       options: {
-        baseField: 'title',
-        nodeType: 'PostsYaml'
+        /* gatsby-plugin-slug-field options here */
       }
     }
   ]
 }
 ```
 
-> In the example above, a `slug` field using the `title` field content will be
-> added to all PostsYaml nodes.
-
-## Usage
-
 The `nodeType` option must be set to enable the plugin. A `slug` field will be
 added to node types matching this option, and the slug will be generated using
 the data from `baseField` option.
 
-— Using the following `gatsby-config.js`:
+### Example
+
+Using the following `gatsby-config.js`:
 
 ```js
 module.exports = {
@@ -53,7 +51,7 @@ module.exports = {
 }
 ```
 
-— The query:
+The query:
 
 ```graphql
 query {
@@ -68,7 +66,7 @@ query {
 }
 ```
 
-— Will return:
+Will return:
 
 ```js
 {
@@ -85,23 +83,7 @@ query {
 }
 ```
 
-## Configure
-
-```js
-module.exports = {
-  plugins: [
-    {
-      resolve: 'gatsby-plugin-slug-field'
-      // options: {
-      //   baseField,
-      //   fieldName: 'slug',
-      //   nodeType: false,
-      //   urlSlug: {}
-      // }
-    }
-  ]
-}
-```
+## Options
 
 ### baseField
 
@@ -112,7 +94,7 @@ Defines the fields used to generate the slug. If set to a `string` or an
 `null` or `undefined`, it will be included as an empty string. For more complex
 use cases, a function is also accepted. It will receive the current node as the
 only parameter (e.g. `node => node.field + '-slug'`) and must return a `string`
-— which will be used by [url-slug][1] to generate the slug.
+— which will be used by [url-slug][3] to generate the slug.
 
 ### fieldName
 
@@ -144,12 +126,14 @@ slugs.
 
 Type: `Object`. Default: `{}`.
 
-`url-slug` options, more info can be found [here][2].
+`url-slug` options, more info can be found [here][4].
 
 ## License
 
 [The MIT License][license]
 
-[1]: https://github.com/stldo/url-slug
-[2]: https://github.com/stldo/url-slug#readme
+[1]: https://img.shields.io/npm/v/gatsby-plugin-slug-field
+[2]: https://www.npmjs.com/package/gatsby-plugin-slug-field
+[3]: https://github.com/stldo/url-slug
+[4]: https://github.com/stldo/url-slug#readme
 [license]: ./LICENSE
