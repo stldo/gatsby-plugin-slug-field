@@ -10,9 +10,9 @@ npm install gatsby-plugin-slug-field
 
 ## Usage
 
-First, enable the plugin in `gatsby-config.js`:
-
 ```js
+/* gatsby-config.js */
+
 module.exports = {
   plugins: [
     {
@@ -31,9 +31,11 @@ the data from `baseField` option.
 
 ### Example
 
-Using the following `gatsby-config.js`:
+Using the following options:
 
 ```js
+/* gatsby-config.js */
+
 module.exports = {
   plugins: [
     {
