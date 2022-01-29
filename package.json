@@ -1,9 +1,7 @@
 {
   "name": "gatsby-plugin-slug-field",
-  "description": "Create a slug field in nodes using data from other fields",
   "version": "4.0.1",
-  "author": "stldo (https://github.com/stldo)",
-  "license": "MIT",
+  "description": "Create a slug field in nodes using data from other fields",
   "repository": "https://github.com/stldo/gatsby-plugin-slug-field",
   "keywords": [
     "gatsby",
@@ -23,13 +21,15 @@
     "url-slug": "^3.0.2"
   },
   "devDependencies": {
-    "eslint": "^8.4.1",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.25.3",
+    "eslint": "^8.8.0",
+    "eslint-config-standard": "^17.0.0-0",
+    "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.2.0"
+    "eslint-plugin-promise": "^6.0.0"
   },
   "peerDependencies": {
     "gatsby": "^4.0.0"
-  }
+  },
+  "author": "stldo (https://github.com/stldo)",
+  "license": "MIT"
 }
