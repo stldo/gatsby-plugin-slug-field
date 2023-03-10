@@ -21,14 +21,14 @@
     "url-slug": "^3.0.4"
   },
   "devDependencies": {
-    "eslint": "^8.8.0",
-    "eslint-config-standard": "^17.0.0-0",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint": "^8.35.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-promise": "^6.1.1"
   },
   "peerDependencies": {
-    "gatsby": "^5.5.0"
+    "gatsby": "^5.0.0"
   },
   "author": "stldo (https://github.com/stldo)",
   "license": "MIT"
